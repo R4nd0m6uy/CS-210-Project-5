@@ -77,6 +77,100 @@ void printScenarioComparison(const vector<YearEndReport>& withoutDeposits,
     cout << "==============================================================" << endl;
 }
 
+
+// Calculate final balance for a proposed monthly deposit.
+// This supports the binary search target-deposit estimator.
+double calculateFinalBalanceWithMonthlyDeposit(double initialInvestment,
+                                               double monthlyDeposit,
+                                               double annualInterest,
+                                               int years) {
+    double balance = initialInvestment;
+    double interestRate = annualInterest / 100.0;
+
+    for (int year = 1; year <= years; ++year) {
+        for (int month = 1; month <= 12; ++month) {
+            balance += monthlyDeposit;
+            double interest = balance * (interestRate / 12.0);
+            balance += interest;
+        }
+    }
+
+    return balance;
+}
+
+// Estimate the minimum monthly deposit needed to reach a target balance.
+// This uses binary search instead of forcing the user to guess repeatedly.
+double estimateMonthlyDepositForTarget(double initialInvestment,
+                                       double annualInterest,
+                                       int years,
+                                       double targetBalance) {
+    double balanceWithoutDeposits = calculateFinalBalanceWithMonthlyDeposit(
+        initialInvestment,
+        0.0,
+        annualInterest,
+        years
+    );
+
+    if (balanceWithoutDeposits >= targetBalance) {
+        return 0.0;
+    }
+
+    double lowDeposit = 0.0;
+    double highDeposit = 100.0;
+
+    while (calculateFinalBalanceWithMonthlyDeposit(initialInvestment, highDeposit, annualInterest, years) < targetBalance) {
+        highDeposit *= 2.0;
+
+        if (highDeposit > 1000000.0) {
+            return -1.0;
+        }
+    }
+
+    while ((highDeposit - lowDeposit) > 0.01) {
+        double midDeposit = (lowDeposit + highDeposit) / 2.0;
+        double projectedBalance = calculateFinalBalanceWithMonthlyDeposit(
+            initialInvestment,
+            midDeposit,
+            annualInterest,
+            years
+        );
+
+        if (projectedBalance >= targetBalance) {
+            highDeposit = midDeposit;
+        } else {
+            lowDeposit = midDeposit;
+        }
+    }
+
+    return highDeposit;
+}
+
+// Display target-balance planning output for the user.
+void printTargetDepositEstimate(double initialInvestment,
+                                double annualInterest,
+                                int years,
+                                double targetBalance) {
+    double estimatedDeposit = estimateMonthlyDepositForTarget(
+        initialInvestment,
+        annualInterest,
+        years,
+        targetBalance
+    );
+
+    cout << "\n   Target Balance Planning" << endl;
+    cout << "==============================================================" << endl;
+    cout << "Target Balance: $" << formatCurrency(roundTo2(targetBalance)) << endl;
+
+    if (estimatedDeposit < 0) {
+        cout << "A reasonable monthly deposit estimate could not be calculated." << endl;
+    } else {
+        cout << "Estimated Minimum Monthly Deposit: $"
+             << formatCurrency(roundTo2(estimatedDeposit)) << endl;
+    }
+
+    cout << "==============================================================" << endl;
+}
+
 // InvestmentCalculator handles all logic for the investment reports
 class InvestmentCalculator {
 public:
@@ -351,6 +445,17 @@ int main() {
         calculator.printReport(withoutDeposits, false);
         calculator.printReport(withDeposits, true);
         printScenarioComparison(withoutDeposits, withDeposits);
+
+        // --- Optional target-balance planning using binary search ---
+        char estimateTarget = 'n';
+        cout << "\nWould you like to estimate the monthly deposit needed for a target balance? (y/n): ";
+        cin >> estimateTarget;
+        cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+        if (estimateTarget == 'y' || estimateTarget == 'Y') {
+            double targetBalance = getValidatedDouble("Enter Target Balance: $");
+            printTargetDepositEstimate(initial, interest, years, targetBalance);
+        }
 
         // --- Option to restart ---
         cout << "\nWould you like to run another calculation? (y/n): ";
