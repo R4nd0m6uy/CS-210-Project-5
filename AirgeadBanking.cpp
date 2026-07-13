@@ -30,6 +30,53 @@ struct YearEndReport {
     double interestEarned;
 };
 
+// Struct to compare the two calculated investment paths
+struct ScenarioSummary {
+    double finalBalanceWithoutDeposits;
+    double finalBalanceWithDeposits;
+    double totalInterestWithoutDeposits;
+    double totalInterestWithDeposits;
+};
+
+
+// Sum the interest earned across all years in a report
+double calculateTotalInterest(const vector<YearEndReport>& report) {
+    double totalInterest = 0.0;
+
+    for (const auto& entry : report) {
+        totalInterest += entry.interestEarned;
+    }
+
+    return totalInterest;
+}
+
+// Print a concise comparison between the two generated investment paths
+void printScenarioComparison(const vector<YearEndReport>& withoutDeposits,
+                             const vector<YearEndReport>& withDeposits) {
+    if (withoutDeposits.empty() || withDeposits.empty()) {
+        cout << "\nNo scenario comparison available." << endl;
+        return;
+    }
+
+    ScenarioSummary summary {
+        withoutDeposits.back().yearEndBalance,
+        withDeposits.back().yearEndBalance,
+        calculateTotalInterest(withoutDeposits),
+        calculateTotalInterest(withDeposits)
+    };
+
+    double depositAdvantage = summary.finalBalanceWithDeposits - summary.finalBalanceWithoutDeposits;
+
+    cout << "\n   Investment Scenario Comparison" << endl;
+    cout << "==============================================================" << endl;
+    cout << "Final Balance Without Deposits: $" << formatCurrency(roundTo2(summary.finalBalanceWithoutDeposits)) << endl;
+    cout << "Final Balance With Deposits:    $" << formatCurrency(roundTo2(summary.finalBalanceWithDeposits)) << endl;
+    cout << "Additional Ending Balance:      $" << formatCurrency(roundTo2(depositAdvantage)) << endl;
+    cout << "Interest Without Deposits:      $" << formatCurrency(roundTo2(summary.totalInterestWithoutDeposits)) << endl;
+    cout << "Interest With Deposits:         $" << formatCurrency(roundTo2(summary.totalInterestWithDeposits)) << endl;
+    cout << "==============================================================" << endl;
+}
+
 // InvestmentCalculator handles all logic for the investment reports
 class InvestmentCalculator {
 public:
@@ -297,9 +344,13 @@ int main() {
         cout << "Press Enter to continue...";
         cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-        // --- Generate and display the two required investment reports ---
-        calculator.printReport(calculator.calculateWithoutMonthlyDeposits(), false);
-        calculator.printReport(calculator.calculateWithMonthlyDeposits(), true);
+        // --- Generate, store, and display the investment reports ---
+        vector<YearEndReport> withoutDeposits = calculator.calculateWithoutMonthlyDeposits();
+        vector<YearEndReport> withDeposits = calculator.calculateWithMonthlyDeposits();
+
+        calculator.printReport(withoutDeposits, false);
+        calculator.printReport(withDeposits, true);
+        printScenarioComparison(withoutDeposits, withDeposits);
 
         // --- Option to restart ---
         cout << "\nWould you like to run another calculation? (y/n): ";
