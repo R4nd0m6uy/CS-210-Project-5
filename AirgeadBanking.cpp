@@ -1,6 +1,7 @@
 #include <iostream>
 #include <iomanip>
 #include <vector>
+#include <algorithm>
 #include <string>
 #include <sstream>
 #include <limits>
@@ -166,6 +167,56 @@ void printTargetDepositEstimate(double initialInvestment,
     } else {
         cout << "Estimated Minimum Monthly Deposit: $"
              << formatCurrency(roundTo2(estimatedDeposit)) << endl;
+    }
+
+    cout << "==============================================================" << endl;
+}
+
+
+// Stores one possible monthly-deposit scenario for comparison and ranking
+struct InvestmentScenario {
+    string label;
+    double monthlyDeposit;
+    double finalBalance;
+};
+
+// Build and rank common monthly-deposit scenarios using vector storage and std::sort
+void printRankedMonthlyDepositScenarios(double initialInvestment,
+                                        double baseMonthlyDeposit,
+                                        double annualInterest,
+                                        int years) {
+    vector<InvestmentScenario> scenarios = {
+        {"No Monthly Deposit", 0.0, 0.0},
+        {"Current Monthly Deposit", baseMonthlyDeposit, 0.0},
+        {"Current + $50 Monthly", baseMonthlyDeposit + 50.0, 0.0},
+        {"Current + $100 Monthly", baseMonthlyDeposit + 100.0, 0.0}
+    };
+
+    for (auto& scenario : scenarios) {
+        scenario.finalBalance = calculateFinalBalanceWithMonthlyDeposit(
+            initialInvestment,
+            scenario.monthlyDeposit,
+            annualInterest,
+            years
+        );
+    }
+
+    sort(scenarios.begin(), scenarios.end(), [](const InvestmentScenario& first,
+                                                const InvestmentScenario& second) {
+        return first.finalBalance > second.finalBalance;
+    });
+
+    cout << "\n   Ranked Monthly Deposit Scenarios" << endl;
+    cout << "==============================================================" << endl;
+    cout << left << setw(30) << "Scenario"
+         << right << setw(18) << "Monthly"
+         << setw(18) << "Final Balance" << endl;
+    cout << "--------------------------------------------------------------" << endl;
+
+    for (const auto& scenario : scenarios) {
+        cout << left << setw(30) << scenario.label
+             << right << setw(18) << ("$" + formatCurrency(roundTo2(scenario.monthlyDeposit)))
+             << setw(18) << ("$" + formatCurrency(roundTo2(scenario.finalBalance))) << endl;
     }
 
     cout << "==============================================================" << endl;
@@ -445,6 +496,7 @@ int main() {
         calculator.printReport(withoutDeposits, false);
         calculator.printReport(withDeposits, true);
         printScenarioComparison(withoutDeposits, withDeposits);
+        printRankedMonthlyDepositScenarios(initial, monthly, interest, years);
 
         // --- Optional target-balance planning using binary search ---
         char estimateTarget = 'n';
