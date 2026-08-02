@@ -496,7 +496,7 @@ int main() {
         calculator.printReport(withoutDeposits, false);
         calculator.printReport(withDeposits, true);
         printScenarioComparison(withoutDeposits, withDeposits);
-        printRankedMonthlyDepositScenarios(initial, monthly, interest, years);
+        printRankedMonthlyDepositScenarios(initial, deposit, interest, years);
 
         // --- Optional target-balance planning using binary search ---
         char estimateTarget = 'n';
