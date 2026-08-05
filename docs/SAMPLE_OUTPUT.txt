@@ -1,0 +1,63 @@
+----------------------------------------------
+  Welcome to the Airgead Banking Calculator!
+----------------------------------------------
+Enter Initial Investment Amount: $Enter Monthly Deposit: $Enter Annual Interest Rate (in %): Enter Number of Years: 
+Your Data:
+Initial Investment Amount: $1,000.00
+Monthly Deposit:           $100.00
+Annual Interest:           5.00%
+Number of Years:           5
+Press Enter to continue...
+   Balance and Interest Without Additional Monthly Deposits
+==============================================================
+  Year	Year End Balance	Year End Earned Interest
+--------------------------------------------------------------
+  1	$1,051.16		$51.16
+  2	$1,104.94		$53.78
+  3	$1,161.47		$56.53
+  4	$1,220.90		$59.42
+  5	$1,283.36		$62.46
+==============================================================
+
+   Balance and Interest With Additional Monthly Deposits
+==============================================================
+  Year	Year End Balance	Year End Earned Interest
+--------------------------------------------------------------
+  1	$2,284.16		$84.16
+  2	$3,634.03		$149.86
+  3	$5,052.95		$218.93
+  4	$6,544.47		$291.52
+  5	$8,112.30		$367.83
+==============================================================
+
+   Investment Scenario Comparison
+==============================================================
+Final Balance Without Deposits: $1,283.36
+Final Balance With Deposits:    $8,112.30
+Additional Ending Balance:      $6,828.94
+Interest Without Deposits:      $283.36
+Interest With Deposits:         $1,112.30
+==============================================================
+
+   Ranked Monthly Deposit Scenarios
+==============================================================
+Scenario                                 Monthly     Final Balance
+--------------------------------------------------------------
+Current + $100 Monthly                   $200.00        $14,941.25
+Current + $50 Monthly                    $150.00        $11,526.77
+Current Monthly Deposit                  $100.00         $8,112.30
+No Monthly Deposit                         $0.00         $1,283.36
+==============================================================
+
+Would you like to estimate the monthly deposit needed for a target balance? (y/n): Enter Target Balance: $
+   Target Balance Planning
+==============================================================
+Target Balance: $10,000.00
+Estimated Minimum Monthly Deposit: $127.64
+==============================================================
+
+Would you like to run another calculation? (y/n): 
+Thank you for using Airgead Banking Calculator. Goodbye!
+
+
+STDERR:
