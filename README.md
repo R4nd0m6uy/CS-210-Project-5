@@ -29,3 +29,18 @@ Code is clearly structured with consistent naming conventions (camelCase for var
 The class encapsulates all business logic, so enhancements don’t clutter main().
 Functions are short and focused, with comments for clarity.
 Edge cases like malformed input or zero values are handled gracefully.
+
+## CS 499 Final Project Enhancement Notes
+
+This repository is used as the algorithms and data structures artifact for CS 499. The original artifact was the CS-210 Airgead Banking investment calculator. The enhanced version improves the project by adding structured report storage, scenario comparison, a binary search target-deposit estimator, and ranked monthly deposit scenarios.
+
+The primary algorithm and data structure improvements include:
+
+- Renaming the source file to `AirgeadBanking.cpp` for cleaner C++ tooling.
+- Using `vector<YearEndReport>` to store generated yearly report data.
+- Adding `ScenarioSummary` to compare investment outcomes.
+- Adding a binary search estimator to calculate the monthly deposit needed to reach a target balance.
+- Adding `vector<InvestmentScenario>` and `std::sort` to rank monthly deposit scenarios by projected final balance.
+
+The enhanced artifact supports the CS 499 algorithms and data structures category by using structured data, vectors, sorting, repeated financial calculations, and binary search to make the original calculator more useful as a decision-support tool.
+
